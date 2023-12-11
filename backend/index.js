@@ -1,6 +1,12 @@
-const express = require('express');
+import express from 'express';
+import mongoose from 'mongoose';
+import userRouter from './routes/user.js';
+
 const app = express();
 const port = 3000;
+
+// Connection string for MongoDB
+const uri = 'mongodb://localhost:27017/CS500'
 
 // Routes
 
@@ -8,6 +14,17 @@ app.get('/', (req, res) => {
     res.send('Hello world!');
 })
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-})
+app.use(express.json());
+
+app.use('/users', userRouter);
+
+mongoose.
+connect(uri)
+.then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    })
+}).catch((error) => {
+    console.log(error);
+});
