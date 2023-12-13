@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
 import hubRouter from './routes/hub.js';
+import deviceRouter from './routes/device.js';
 
 const app = express();
 const port = 3000;
@@ -19,7 +20,9 @@ app.use(express.json());
 
 app.use('/users', userRouter);
 
-app.use('/hub', hubRouter);
+app.use('/hubs', hubRouter);
+
+app.use('/devices', deviceRouter);
 
 mongoose.
 connect(uri)
