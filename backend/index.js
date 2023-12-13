@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
+import hubRouter from './routes/hub.js';
 
 const app = express();
 const port = 3000;
@@ -17,6 +18,8 @@ app.get('/', (req, res) => {
 app.use(express.json());
 
 app.use('/users', userRouter);
+
+app.use('/hub', hubRouter);
 
 mongoose.
 connect(uri)
