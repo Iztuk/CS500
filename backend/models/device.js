@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const deviceSchema = mongoose.Schema(
     {
+        deviceNickname: {
+            type: String
+        },
         deviceMac: {
             type: String,
             unique: true,

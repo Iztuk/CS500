@@ -1,5 +1,6 @@
 import express from 'express';
 import HubModel from '../models/hub.js';
+import DeviceModel from '../models/device.js';
 import UserModel from '../models/user.js';
 
 const router = express.Router();
@@ -8,6 +9,7 @@ router.post('/add-hub', async (req, res) => {
     try {
 
         let { 
+            hubNickname,
             hubMac, 
             user 
         } = req.body;
@@ -38,6 +40,7 @@ router.post('/add-hub', async (req, res) => {
         } else {
             // If hub doesn't exist, create a new hub and add the user.
             const hub = new HubModel({
+                hubNickname,
                 hubMac,
                 users: [user],
                 devices: []
@@ -68,7 +71,7 @@ router.delete('/remove-hub', async (req, res) => {
         const {
             hubMac,
             user
-        } = req.body;
+        } = req.query;
 
         // Find the hub by hubMac.
         const hub = await HubModel.findOne({ hubMac });
@@ -89,8 +92,13 @@ router.delete('/remove-hub', async (req, res) => {
         // Remove the specified user from the hub's users array.
         hub.users.pull(user);
 
-        // If the hub has no users left, remove the hub entirely.
+        // If the hub has no users left, remove the hub entirely. (Includes the devices associated)
         if (hub.users.length === 0) {
+            // Retrieve the devices associated with the hub and delete them.
+            const devices = await DeviceModel.find({ deviceMac: { $in: hub.devices } });
+            await DeviceModel.deleteMany({ deviceMac: { $in: hub.devices } });
+            
+            // Deletes the hub.
             await HubModel.deleteOne({ hubMac });
             return res.status(200).json({ message: 'Hub deleted successfully' });
         }
@@ -107,7 +115,7 @@ router.delete('/remove-hub', async (req, res) => {
 router.get('/user-hubs', async (req, res) => {
     // Get all the hub's associated with the user.
     try {
-        const _id = req.body;
+        const _id = req.query;
 
         // Find all hubs where the user is included in the users array.
         const userHubs = await HubModel.find({ users: _id });

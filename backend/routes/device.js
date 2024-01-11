@@ -7,10 +7,13 @@ const router = express.Router();
 router.post('/add-device', async (req, res) => {
     try {
         const {
+            deviceNickname,
             deviceMac,
             deviceType,
             hubMac
         } = req.body;
+
+        console.log('Received data: ', req.body);
 
         // Check if the device already exists.
         const existingDevice = await DeviceModel.findOne({ deviceMac });
@@ -21,6 +24,7 @@ router.post('/add-device', async (req, res) => {
 
         // Create a new device instance.
         const newDevice  = new DeviceModel({
+            deviceNickname,
             deviceMac,
             deviceType
         });
@@ -47,13 +51,14 @@ router.post('/add-device', async (req, res) => {
 
 router.delete('/remove-device', async (req, res) => {
     try {
-        const {
-            deviceMac,
-            hubMac
-        } = req.body;
+        const deviceMac = req.query.deviceMac;
+
+        console.log(req.query);
 
         // Find the hub using it's Mac address.
-        const hub = await HubModel.findOne({ hubMac });
+        const hub = await HubModel.findOne({ devices: deviceMac });
+
+        console.log(hub);
 
         if (!hub) {
             return res.status(404).json({ message: 'Hub not found' });
@@ -80,7 +85,9 @@ router.get('/user-devices', async (req, res) => {
     try {
         const {
             _id
-        } = req.body;
+        } = req.query;
+
+        console.log(req.body)
 
         // Find all hubs associated with the user.
         const userHubs = await HubModel.find({ users: _id });

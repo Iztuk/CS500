@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
     try {
-        console.log(req.body);
         // Initializes variables from the request body.
         const {
             userId,

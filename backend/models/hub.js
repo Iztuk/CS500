@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 
 const hubSchema = mongoose.Schema(
     {
+        hubNickname: {
+            type: String
+        },
         hubMac: {
             type: String,
             unique: true,

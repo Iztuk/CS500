@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import userRouter from './routes/user.js';
 import hubRouter from './routes/hub.js';
 import deviceRouter from './routes/device.js';
+import cors from 'cors';
 
 const app = express();
 const port = 3000;
@@ -10,11 +11,9 @@ const port = 3000;
 // Connection string for MongoDB
 const uri = 'mongodb://localhost:27017/CS500'
 
-// Routes
+app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send('Hello world!');
-})
+// Routes
 
 app.use(express.json());
 
